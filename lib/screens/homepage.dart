@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   String indx="";
   List<Product> list=List();
   bool _loading = false;
-  ProductElement products=ProductElement();
+  List<ProductElement> products=List();
   void getHttp() async {
     setState(() {
 
@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         list = productFromJson(jsonEncode(response.data));
         _loading=true;
+        products=list[0].products;
       });
 
     } catch (e) {
@@ -50,14 +51,14 @@ class _HomePageState extends State<HomePage> {
           child: Scaffold(
             body: SafeArea(
               child: Container(
-                color: Colors.pinkAccent,
+                color: Colors.pink[500],
                 height: MediaQuery.of(context).size.height,
                 child: Stack(
                   children: [
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
                       decoration: BoxDecoration(
-
+                        image:DecorationImage(image: AssetImage("img/background.jpg"),fit: BoxFit.cover)
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Hey Customer",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w800),),
+                                    Text("Hey Customer",style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w800),),
                                     SizedBox(height: 6,),
                                     Text("Lets find quality food",style:TextStyle(color: Colors.grey[400],fontSize: 12,fontWeight: FontWeight.w400),)
                                   ],
@@ -82,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                                   borderRadius: BorderRadius.circular((10)),
                                   color: Colors.amber[500],
                                 ),
-                                child: Image.asset(""),
+                                child: Image.asset("img/profile.png",fit: BoxFit.cover,),
                               )
                             ],
                           ),
@@ -116,15 +117,16 @@ class _HomePageState extends State<HomePage> {
 
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(8),
-                                    color: Colors.green[700],
+                                    color: Colors.amber[500],
                                     boxShadow: [
                                       BoxShadow(
                                         offset: Offset(0, 3),
                                         blurRadius: 5,
                                         color: Color(0x4D3D015B),
                                       )
-                                    ]
+                                    ],
                                 ),
+                                child: Image.asset("img/search.png",fit: BoxFit.cover,),
                               )
                             ],
                           ),
@@ -154,10 +156,7 @@ class _HomePageState extends State<HomePage> {
                                 Container(
                                   color: Colors.white,
                                   height: 100,
-                                  child:list.isEmpty == null ?
-                                  Container(
-
-                                  ):
+                                  child:list.length >0 ?
                                   ListView.builder(
                                     itemCount:list.length,
                                     scrollDirection: Axis.horizontal,
@@ -167,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                                       return InkWell(
                                         onTap: (){
                                           setState(() {
-                                            products=list[index].products[index];
+                                            products=list[index].products;
                                             indx=current.categoryName;
                                           });
                                         },
@@ -178,27 +177,26 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                       );
                                     },
-                                  ),
+                                  ):Container(),
                                 ),
                                 SizedBox(height: 20,),
                                 Container(
                                   color: Colors.white,
-                                  child:products==null?
-                                  Container(
-                                  ):
+                                  child:list.length >0 ?
 
                                   ListView.builder(
-                                    itemCount:list.length,
+                                    itemCount:products.length,
                                     shrinkWrap: true,
                                     scrollDirection: Axis.vertical,
                                     physics:NeverScrollableScrollPhysics(),
                                     itemBuilder: (context, index){
                                       return Products(
-                                        name:list[0].products[index].productName,
-                                        image: list[0].products[index].imageUrl,
+                                        name:products[index].productName,
+                                        image: products[index].imageUrl,
+                                        price: products[index].productPrice,
                                       );
                                     },
-                                  ),
+                                  ):Container(),
                                 ),
                               ],
                             ),
@@ -216,9 +214,11 @@ class _HomePageState extends State<HomePage> {
   }
 }
 class Products extends StatefulWidget {
-  Products({this.name,this.image});
+  Products({this.name,this.image,this.products,this.price});
   final String name;
   final String image;
+  final ProductElement products;
+  final double price;
   @override
   _ProductsState createState() => _ProductsState();
 }
@@ -257,7 +257,7 @@ class _ProductsState extends State<Products> {
                       ],
                     ),
                     SizedBox(height: 8,),
-                    Text("\$2.40",style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500),)
+                    Text("\$ ${widget.price}",style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500),)
                   ],
                 ),
               ),
@@ -266,7 +266,7 @@ class _ProductsState extends State<Products> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => Details(
-                        productname: widget.name,
+                        productname: widget.name,productimage: widget.image,productprice: widget.price,
                       ),
                     ),
                   );
@@ -314,9 +314,23 @@ class _CategoriesState extends State<Categories> {
           padding: EdgeInsets.symmetric(vertical: 5),
           height: 100,
           width: 55,
-          decoration:widget.productcategory!=widget.categoryname?BoxDecoration(color: Colors.green[800],borderRadius: BorderRadius.circular(20),): BoxDecoration(
+          decoration:widget.productcategory!=widget.categoryname?BoxDecoration(color: Colors.green[800]
+            ,borderRadius: BorderRadius.circular(20),
+             boxShadow: [BoxShadow(
+               offset: Offset(0, 3),
+               blurRadius: 5,
+               color: Colors.greenAccent[100],
+             )
+             ]
+            ): BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Colors.amber[400]
+              color: Colors.amber[400],
+              boxShadow: [BoxShadow(
+                offset: Offset(0, 3),
+                blurRadius: 5,
+                color: Colors.amber[100],
+              )
+              ]
           ),
           child: Column(
             children: [
@@ -328,7 +342,7 @@ class _CategoriesState extends State<Categories> {
               SizedBox(height: 5,),
               Padding(
                 padding: const EdgeInsets.only(left:3.0),
-                child: Text(widget.categoryname,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w400),),
+                child: Text(widget.categoryname,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400),),
               )
             ],
           ),
