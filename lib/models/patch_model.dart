@@ -1,15 +1,15 @@
 // To parse this JSON data, do
 //
-//     final category = categoryFromJson(jsonString);
+//     final patchcategory = patchcategoryFromJson(jsonString);
 
 import 'dart:convert';
 
-Category categoryFromJson(String str) => Category.fromJson(json.decode(str));
+Patchcategory patchcategoryFromJson(String str) => Patchcategory.fromJson(json.decode(str));
 
-String categoryToJson(Category data) => json.encode(data.toJson());
+String patchcategoryToJson(Patchcategory data) => json.encode(data.toJson());
 
-class Category {
-  Category({
+class Patchcategory {
+  Patchcategory({
     this.message,
     this.data,
   });
@@ -17,7 +17,7 @@ class Category {
   String message;
   Data data;
 
-  factory Category.fromJson(Map<String, dynamic> json) => Category(
+  factory Patchcategory.fromJson(Map<String, dynamic> json) => Patchcategory(
     message: json["message"],
     data: Data.fromJson(json["data"]),
   );

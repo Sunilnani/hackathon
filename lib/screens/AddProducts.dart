@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:e_commerce/models/all_products_model.dart';
+import 'package:e_commerce/models/patch_model.dart';
+import 'package:e_commerce/models/post_model.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 class AddProducts extends StatefulWidget {
@@ -14,8 +16,13 @@ class _AddProductsState extends State<AddProducts> {
   var data= "";
   dynamic res ;
   dynamic respo;
+  dynamic responses;
+  dynamic patchresponse;
+  Category category=Category();
   Products createcatg= Products();
+  Patchcategory patchcatg=Patchcategory();
   final TextController = TextEditingController();
+  final productnameController=TextEditingController();
   final descriptionContoller = TextEditingController();
   final priceCotroller = TextEditingController();
   final categoryIdcontoller = TextEditingController();
@@ -32,13 +39,13 @@ class _AddProductsState extends State<AddProducts> {
 
   File img ;
   void productsadd()async{
-    String  text = TextController.text.trim();
+    String  productname = productnameController.text.trim();
     String  desc = descriptionContoller.text.trim();
     String  price = priceCotroller.text.trim();
     String  category = categoryIdcontoller.text.trim();
     try{
       FormData formData = FormData.fromMap({
-        "name" : text,
+        "name" : productname,
         "description":desc,
         "price":price,
         "category_id":category,
@@ -49,7 +56,7 @@ class _AddProductsState extends State<AddProducts> {
       setState(() {
         createcatg = productsFromJson(jsonEncode(response.data));
         print(response.data);
-        res=response.statusMessage;
+        responses=response.data["message"];
       });
     }
     catch(e){
@@ -105,10 +112,11 @@ class _AddProductsState extends State<AddProducts> {
       Response response =
       await Dio().post("http://sowmyamatsa.pythonanywhere.com/category/" , data: formData);
       setState(() {
-        createcatg = productsFromJson(jsonEncode(response.data));
+        category = categoryFromJson(jsonEncode(response.data)) as String;
 
         print(response.data);
         res=response.statusMessage;
+        print(response);
       });
     } catch (e) {
       setState(() {
@@ -128,7 +136,7 @@ class _AddProductsState extends State<AddProducts> {
       setState(() {
         createcatg = productsFromJson(jsonEncode(response.data));
         print(response.data["message"]);
-        respo=response.statusMessage;
+        respo=response.data["message"];
       });
     } catch (e) {
       setState(() {
@@ -148,10 +156,10 @@ class _AddProductsState extends State<AddProducts> {
       Response response =
       await Dio().patch("http://sowmyamatsa.pythonanywhere.com/category/" , data: formData);
       setState(() {
-        createcatg = productsFromJson(jsonEncode(response.data));
+        patchcatg = patchcategoryFromJson(jsonEncode(response.data));
 
         print(response.data);
-        res=response.statusMessage;
+        patchresponse=response.data["message"];
       });
     }
     catch(e){
@@ -175,7 +183,7 @@ class _AddProductsState extends State<AddProducts> {
       setState(() {
         createcatg = productsFromJson(jsonEncode(response.data));
         print(response.data);
-        res=response.statusMessage;
+        res=response.data["message"];
       });
     }
     catch(e){
@@ -231,6 +239,7 @@ class _AddProductsState extends State<AddProducts> {
 
                                 });
                               }),
+                          res == null ? Text("no data")  :    Text("test --- ${res}"),
                           // Center(
                           //   child: RaisedButton(
                           //     child: Text('click Image'),
@@ -262,10 +271,11 @@ class _AddProductsState extends State<AddProducts> {
 
                                 });
                               }),
+                          respo == null ?Text("enter valid id") :Text("test --- ${respo}"),
                         ],
                       ),
                     ),
-                    // respo == null ?Text("no data")  :    Text("test --- ${respo}"),
+
 
 
 
@@ -280,7 +290,7 @@ class _AddProductsState extends State<AddProducts> {
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             child: TextField(
-                              controller: TextController,
+                              controller: productnameController,
                               decoration: InputDecoration(
                                   hintText: "Enter Name"
                               ),
@@ -321,6 +331,7 @@ class _AddProductsState extends State<AddProducts> {
 
                                 });
                               }),
+                          responses==null ?Text("enter valid details"):Text(responses),
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 20),
                             child: TextField(
@@ -377,6 +388,7 @@ class _AddProductsState extends State<AddProducts> {
 
                                 });
                               }),
+                          patchresponse==null?Text("enter valid id"):Text(patchresponse),
 
 
 
