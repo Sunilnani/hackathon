@@ -37,7 +37,7 @@ class Data {
 
   int categoryId;
   String name;
-  String imageUrl;
+  dynamic imageUrl;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     categoryId: json["category_id"],

@@ -6,18 +6,19 @@ import 'package:e_commerce/screens/homepage.dart';
 import 'package:flutter/material.dart';
 
 import 'AddProducts.dart';
-import 'login_screen.dart';
 class Details extends StatefulWidget {
-  Details({this.productname,this.productimage,this.productprice});
+  Details({this.productname,this.productimage,this.productprice,this.productdesc});
   final String productname;
   final String productimage;
   final double productprice;
+  final String productdesc;
   @override
   _DetailsState createState() => _DetailsState();
 }
 
 class _DetailsState extends State<Details> {
   Product listTodos = Product();
+  List<ProductElement>singleproduct = List();
   void getHttp() async {
     setState(() {
     });
@@ -26,6 +27,7 @@ class _DetailsState extends State<Details> {
       await Dio().get("http://sowmyamatsa.pythonanywhere.com/product/?product_id=${widget.productname}");
       setState(() {
         listTodos = productFromJson(jsonEncode(response.data)) ;
+        singleproduct=listTodos.products;
         print(response);
       });
       print(response);
@@ -60,7 +62,7 @@ class _DetailsState extends State<Details> {
                             onTap: (){
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) =>LoginScreen(
+                                  builder: (context) =>HomePage(
                                   ),
                                 ),
                               );
@@ -87,7 +89,7 @@ class _DetailsState extends State<Details> {
                       padding: EdgeInsets.symmetric(horizontal: 23, vertical: 29),
                       height: 300,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(30),
                         image: DecorationImage(
                             image:NetworkImage("http://sowmyamatsa.pythonanywhere.com/${widget.productimage}"),fit: BoxFit.cover
                         ),
@@ -105,7 +107,7 @@ class _DetailsState extends State<Details> {
                                 children: [
                                   Icon(Icons.local_fire_department,color: Colors.orange[600],size: 18,),
                                   SizedBox(width: 5,),
-                                  Text("${listTodos.categoryName}",style: TextStyle(color: Colors.grey[800],fontWeight: FontWeight.w500,fontSize: 12),)
+                                  Text("Spicy",style: TextStyle(color: Colors.grey[800],fontWeight: FontWeight.w500,fontSize: 12),)
                                 ],
                               ),
                               SizedBox(width: 10,),
@@ -147,7 +149,7 @@ class _DetailsState extends State<Details> {
                         alignment: Alignment.centerLeft,
                         child: Text("Details",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w900,fontSize: 20),)),
                     SizedBox(height: 10,),
-                    Text("this is sowmya one of the good girl in our team but she is not introdusing his friends to me but in future she will definetely introduces me his friens thank you",style: TextStyle(color: Colors.grey[500],fontWeight: FontWeight.w300),),
+                    Text(widget.productdesc,style: TextStyle(color: Colors.grey[500],fontWeight: FontWeight.w300),),
                     SizedBox(height: 20,),
                     Container(
                       height: 50,

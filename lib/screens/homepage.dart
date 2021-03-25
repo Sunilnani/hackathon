@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: 30,),
 
-                          Text("Welcome to Spicy Dhaba",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 22),),
+                          Text("Welcome To Schezwan Spot",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 22),),
                           SizedBox(height: 30,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                                       )
                                     ],
                                 ),
-                                child: Image.asset("img/search.png",fit: BoxFit.cover,),
+                                child: Image.asset("img/search.png",fit: BoxFit.fitWidth,),
                               )
                             ],
                           ),
@@ -194,6 +194,7 @@ class _HomePageState extends State<HomePage> {
                                         name:products[index].productName,
                                         image: products[index].imageUrl,
                                         price: products[index].productPrice,
+                                        description: products[index].productDescription,
                                       );
                                     },
                                   ):Container(),
@@ -214,11 +215,13 @@ class _HomePageState extends State<HomePage> {
   }
 }
 class Products extends StatefulWidget {
-  Products({this.name,this.image,this.products,this.price});
+  Products({this.name,this.image,this.products,this.price,this.description});
   final String name;
   final String image;
   final ProductElement products;
   final double price;
+  final String description;
+
   @override
   _ProductsState createState() => _ProductsState();
 }
@@ -247,17 +250,17 @@ class _ProductsState extends State<Products> {
                   children: [
                     Container(width: 100,child: Text(widget.name,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),)),
                     SizedBox(height: 8,),
-                    Text("Hotbeef Pizza",style: TextStyle(color: Colors.grey[300],fontSize: 12,fontWeight: FontWeight.w400),),
+                    Text("Full Stamina",style: TextStyle(color: Colors.grey[400],fontSize: 12,fontWeight: FontWeight.w400),),
                     SizedBox(height: 8,),
                     Row(
                       children: [
-                        Icon(Icons.local_fire_department,color: Colors.orangeAccent,size: 18,),
+                        Text("Spicy",style: TextStyle(color: Colors.amber[400],fontWeight: FontWeight.w500,fontSize: 15,fontStyle: FontStyle.italic,),),
                         SizedBox(width: 4,),
-                        Text("24 calories",style: TextStyle(color: Colors.amber[400],fontWeight: FontWeight.w500,fontSize: 15),),
+                        Icon(Icons.local_fire_department,color: Colors.red[600],size: 18,),
                       ],
                     ),
                     SizedBox(height: 8,),
-                    Text("\$ ${widget.price}",style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w500),)
+                    Text("\$ ${widget.price}",style: TextStyle(color: Colors.black87,fontSize: 16,fontWeight: FontWeight.w500),)
                   ],
                 ),
               ),
@@ -266,7 +269,7 @@ class _ProductsState extends State<Products> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => Details(
-                        productname: widget.name,productimage: widget.image,productprice: widget.price,
+                        productname: widget.name,productimage: widget.image,productprice: widget.price,productdesc: widget.description,
                       ),
                     ),
                   );
