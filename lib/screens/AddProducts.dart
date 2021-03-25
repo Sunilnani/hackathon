@@ -23,6 +23,10 @@ class _AddProductsState extends State<AddProducts> {
   final numberController=TextEditingController();
   final nameController=TextEditingController();
   final categoryidController= TextEditingController();
+  final patch_product_idController= TextEditingController();
+  final patch_product_nameController=TextEditingController();
+  final patch_priceController=TextEditingController();
+  final patch_category_idController= TextEditingController();
 
 
 
@@ -113,6 +117,26 @@ class _AddProductsState extends State<AddProducts> {
       print(e);
     }
   }
+  void deletecategory() async {
+    String  number = idcontroller.text.trim();
+    try {
+      FormData formData = FormData.fromMap({
+        "category_id" : number
+      });
+      Response response =
+      await Dio().delete("http://sowmyamatsa.pythonanywhere.com/category/" , data: formData);
+      setState(() {
+        createcatg = productsFromJson(jsonEncode(response.data));
+        print(response.data["message"]);
+        respo=response.statusMessage;
+      });
+    } catch (e) {
+      setState(() {
+        print("error ---> $e");
+      });
+      print(e);
+    }
+  }
   void patchcategory()async{
     String  text = nameController.text.trim();
     String categoryid = categoryidController.text.trim();
@@ -134,27 +158,31 @@ class _AddProductsState extends State<AddProducts> {
 
     }
   }
-  //
-  void deletecategory() async {
-    String  number = idcontroller.text.trim();
-    try {
+  void patchproduct()async{
+    String  product_id = patch_product_idController.text.trim();
+    String patch_name = patch_product_nameController.text.trim();
+    String patch_prise = patch_priceController.text.trim();
+    String category_id = patch_category_idController.text.trim();
+    try{
       FormData formData = FormData.fromMap({
-        "category_id" : number
+        "product_id" : product_id,
+        "name":patch_name,
+        "price":patch_prise,
+        "category_id":category_id
       });
       Response response =
-      await Dio().delete("http://sowmyamatsa.pythonanywhere.com/category/" , data: formData);
+      await Dio().patch("http://sowmyamatsa.pythonanywhere.com/product/" , data: formData);
       setState(() {
         createcatg = productsFromJson(jsonEncode(response.data));
-        print(response.data["message"]);
-        respo=response.statusMessage;
+        print(response.data);
+        res=response.statusMessage;
       });
-    } catch (e) {
-      setState(() {
-        print("error ---> $e");
-      });
-      print(e);
+    }
+    catch(e){
+
     }
   }
+
   @override
   void initState() {
     deletecategory();
@@ -345,6 +373,53 @@ class _AddProductsState extends State<AddProducts> {
                               child: Text("click to update"),
                               onPressed: (){
                                 patchcategory();
+                                setState(() {
+
+                                });
+                              }),
+
+
+
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: TextField(
+                              controller: patch_product_idController,
+                              decoration: InputDecoration(
+                                  hintText: "Enter product_id"
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: TextField(
+                              controller: patch_product_nameController,
+                              decoration: InputDecoration(
+                                  hintText: "Enter Product Name"
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: TextField(
+                              controller: patch_priceController,
+                              decoration: InputDecoration(
+                                  hintText: "Enter Price"
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: TextField(
+                              controller: patch_category_idController,
+                              decoration: InputDecoration(
+                                  hintText: "Category id"
+                              ),
+                            ),
+                          ),
+                          RaisedButton(
+                              child: Text("Click To Add"),
+                              onPressed: (){
+                                patchproduct();
                                 setState(() {
 
                                 });
