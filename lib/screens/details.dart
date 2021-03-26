@@ -77,7 +77,7 @@ class _DetailsState extends State<Details> {
                                 ),
                               );
                             },
-                            child: Icon(Icons.add,color: Colors.green[700],size: 22,))
+                            child: Icon(Icons.add,color: Colors.green[700],size: 25,))
                       ],
                     ),
                     SizedBox(height: 15,),

@@ -248,19 +248,19 @@ class _ProductsState extends State<Products> {
                   crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
-                    Container(width: 100,child: Text(widget.name,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),)),
+                    Container(width: 130,child: Text(widget.name,style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),)),
                     SizedBox(height: 8,),
                     Text("Full Stamina",style: TextStyle(color: Colors.grey[400],fontSize: 12,fontWeight: FontWeight.w400),),
-                    SizedBox(height: 8,),
+                    SizedBox(height: 5,),
                     Row(
                       children: [
-                        Text("Spicy",style: TextStyle(color: Colors.amber[400],fontWeight: FontWeight.w500,fontSize: 15,fontStyle: FontStyle.italic,),),
-                        SizedBox(width: 4,),
+                        Text("Spicy",style: TextStyle(color: Colors.amber[400],fontWeight: FontWeight.w500,fontSize: 14,fontStyle: FontStyle.italic,),),
+                        SizedBox(width: 5,),
                         Icon(Icons.local_fire_department,color: Colors.red[600],size: 18,),
                       ],
                     ),
-                    SizedBox(height: 8,),
-                    Text("\$ ${widget.price}",style: TextStyle(color: Colors.black87,fontSize: 16,fontWeight: FontWeight.w500),)
+                    SizedBox(height: 5,),
+                    Text("\$ ${widget.price}",style: TextStyle(color: Colors.black87,fontSize: 14,fontWeight: FontWeight.w500),)
                   ],
                 ),
               ),

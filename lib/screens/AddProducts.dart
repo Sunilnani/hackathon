@@ -13,7 +13,7 @@ class AddProducts extends StatefulWidget {
 
 class _AddProductsState extends State<AddProducts> {
   Dio dio = new Dio();
-  var data= "";
+  File datas;
   dynamic res ;
   dynamic respo;
   dynamic responses;
@@ -83,48 +83,70 @@ class _AddProductsState extends State<AddProducts> {
       print(e);
     }
   }
+
+
+
+  // Future addcategory ()async{
+  //   File _image;
+  //   final picker= ImagePicker();
+  //   var pickfile=await picker.getImage(source: ImageSource.gallery);
+  //   _image=pickfile.path as File;
+  //   _upload(_image);
+  // }
+
   void cameraClick ()  async{
-    File image;
-    var imagePicker = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if(imagePicker != null){
+    File _image;
+    var galary =await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (galary != null){
       setState(() {
-        image=imagePicker;
-        img = imagePicker;
+        _image=galary;
+        img=galary;
+        print(img.path);
       });
     }
   }
-  void addcategory() async {
+  void addcategory()async{
     String  text = TextController.text.trim();
-    String  desc = descriptionContoller.text.trim();
-    String  price = priceCotroller.text.trim();
-    String  category = categoryIdcontoller.text.trim();
+    // String filename=file.path.split("/").last;
+    FormData data = FormData.fromMap({
+      "name":text,
+      "image":await MultipartFile.fromFile(img.path)
+    });
+    Response response =
+    await Dio().post("http://sowmyamatsa.pythonanywhere.com/category/" , data: data);
+    setState(() {
+      category = categoryFromJson(jsonEncode(response.data)) ;
 
-    // File image;
-    // var imagePicker = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    try {
-
-      FormData formData = FormData.fromMap({
-        "name" : text,
-        "image":"null"
-
-      });
-      Response response =
-      await Dio().post("http://sowmyamatsa.pythonanywhere.com/category/" , data: formData);
-      setState(() {
-        category = categoryFromJson(jsonEncode(response.data)) as String;
-
-        print(response.data);
-        res=response.statusMessage;
-        print(response);
-      });
-    } catch (e) {
-      setState(() {
-        print("error ---> $e");
-      });
-      print(e);
-    }
+      print(response.data);
+      res=response.statusMessage;
+      print(response);
+    });
   }
+  // void addcategory() async {
+  //   String  text = TextController.text.trim();
+  //   try {
+  //
+  //     FormData formData = FormData.fromMap({
+  //       "name" : text,
+  //       "image":"null"
+  //
+  //     });
+  //     Response response =
+  //     await Dio().post("http://sowmyamatsa.pythonanywhere.com/category/" , data: formData);
+  //     setState(() {
+  //       category = categoryFromJson(jsonEncode(response.data)) ;
+  //
+  //       print(response.data);
+  //       res=response.statusMessage;
+  //       print(response);
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       print("error ---> $e");
+  //     });
+  //     print(e);
+  //   }
+  // }
   void deletecategory() async {
     String  number = idcontroller.text.trim();
     try {
@@ -159,7 +181,7 @@ class _AddProductsState extends State<AddProducts> {
         patchcatg = patchcategoryFromJson(jsonEncode(response.data));
 
         print(response.data);
-        patchresponse=response.data["message"];
+        patchresponse=response.data["m"];
       });
     }
     catch(e){
@@ -232,7 +254,14 @@ class _AddProductsState extends State<AddProducts> {
                             ),
                           ),
                           RaisedButton(
-                              child: Text("click to Add"),
+                              child: Text("upload"),
+                              onPressed: (){
+                                setState(() {
+                                  cameraClick();
+                                });
+                              }),
+                          RaisedButton(
+                              child: Text("Submit"),
                               onPressed: (){
                                 addcategory();
                                 setState(() {
