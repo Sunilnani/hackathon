@@ -4,8 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:e_commerce/models/single_product_model.dart';
 import 'package:e_commerce/screens/homepage.dart';
 import 'package:flutter/material.dart';
-
-import 'AddProducts.dart';
 class Details extends StatefulWidget {
   Details({this.productname,this.productimage,this.productprice,this.productdesc});
   final String productname;
@@ -17,6 +15,7 @@ class Details extends StatefulWidget {
 }
 
 class _DetailsState extends State<Details> {
+  int _itemcount=1;
   Product listTodos = Product();
   List<ProductElement>singleproduct = List();
   void getHttp() async {
@@ -70,12 +69,12 @@ class _DetailsState extends State<Details> {
                             child: Icon(Icons.arrow_back_ios,color: Colors.green[700],size: 22,)),
                         InkWell(
                             onTap: (){
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>AddProducts(
-                                  ),
-                                ),
-                              );
+                              // Navigator.of(context).push(
+                              //   MaterialPageRoute(
+                              //     builder: (context) =>AddProducts(
+                              //     ),
+                              //   ),
+                              // );
                             },
                             child: Icon(Icons.add,color: Colors.green[700],size: 25,))
                       ],
@@ -122,7 +121,7 @@ class _DetailsState extends State<Details> {
                           ),
                         ),
                         Container(
-                          child: Text("\$ ${widget.productprice}",style: TextStyle(color: Colors.green[700],fontWeight: FontWeight.w700,fontSize: 22),),
+                          child: Text("\$ ${widget.productprice*_itemcount}",style: TextStyle(color: Colors.green[700],fontWeight: FontWeight.w700,fontSize: 22),),
                         )
                       ],
                     ),
@@ -139,8 +138,22 @@ class _DetailsState extends State<Details> {
                             ],
                           ),
                         ),
+                        // Container(
+                        //   child: Icon(Icons.delivery_dining,color: Colors.green[800],size: 25,),
+                        // )
                         Container(
-                          child: Icon(Icons.delivery_dining,color: Colors.green[800],size: 25,),
+                          height: 40,
+                          width: 120,
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15),color: Colors.amber),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _itemcount !=0 ? IconButton(icon: Icon(Icons.remove,), onPressed: ()=>setState(()=>_itemcount--),):Container(),
+                              Text(_itemcount.toString()),
+                              IconButton(icon: Icon(Icons.add), onPressed: ()=>setState(()=>_itemcount++
+                              ))
+                            ],
+                          ),
                         )
                       ],
                     ),
@@ -165,7 +178,8 @@ class _DetailsState extends State<Details> {
                           color: Colors.green[800]
                       ),
                       child: Center(child: Text("Add To Cart",style: TextStyle(color: Colors.amber,fontWeight: FontWeight.w700,fontSize: 18),)),
-                    )
+                    ),
+
                   ],
                 ),
               ),
