@@ -6,9 +6,7 @@ import 'package:e_commerce/models/data_model.dart';
 import 'package:e_commerce/models/delete_model.dart';
 import 'package:e_commerce/models/patch_model.dart';
 import 'package:e_commerce/models/post_model.dart';
-import 'package:e_commerce/screens/catg_prod_adding.dart';
-import 'package:e_commerce/screens/delete_catg_prod.dart';
-import 'package:e_commerce/screens/patch_prod_catg.dart';
+import 'package:e_commerce/screens/category_del_patch.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -27,16 +25,24 @@ class _HomePageState extends State<HomePage> {
   List<ProductElement> products=List();
 
   File img;
+  File productimag ;
   final TextController = TextEditingController();
   final idcontroller = TextEditingController();
   final nameController=TextEditingController();
   final categoryidController= TextEditingController();
+  final productnameController=TextEditingController();
+  final descriptionContoller = TextEditingController();
+  final priceCotroller = TextEditingController();
+  final caloryCotroller = TextEditingController();
+  final categoryIdcontoller = TextEditingController();
   Category category=Category();
   Delete createcatg= Delete();
   Patchcategory patchcatg=Patchcategory();
   dynamic res ;
   dynamic respo;
   dynamic patchresponse;
+  dynamic responses;
+
   void getHttp() async {
     setState(() {
 
@@ -89,7 +95,7 @@ class _HomePageState extends State<HomePage> {
     String  number = idcontroller.text.trim();
     try {
       FormData formData = FormData.fromMap({
-        "category_id" : number
+        "category_id" :categoryindx
       });
       Response response =
       await Dio().delete("http://sowmyamatsa.pythonanywhere.com/category/" , data: formData);
@@ -161,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                             res=res;
                           });
                         }),
-                    res == null ? Text("no data")  : Text("test --- ${res}"),
+                    res == null ? Text("")  : Text("test --- ${res}"),
                   ],
                 ),
               ),
@@ -193,15 +199,15 @@ class _HomePageState extends State<HomePage> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: TextField(
-                        controller: idcontroller,
-                        decoration: InputDecoration(
-                            hintText: "Enter id "
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20),
+                    //   child: TextField(
+                    //     controller: idcontroller,
+                    //     decoration: InputDecoration(
+                    //         hintText: "Enter id "
+                    //     ),
+                    //   ),
+                    // ),
                     RaisedButton(
                         child: Text("click to delete"),
                         onPressed: (){
@@ -277,6 +283,128 @@ class _HomePageState extends State<HomePage> {
             actions: <Widget>[
               new FlatButton(
                 child: new Text('SUBMIT'),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => HomePage(
+                      ),
+                    ),
+                  );
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void productcameraClick ()  async{
+    File _image;
+    var galary =await ImagePicker.pickImage(source: ImageSource.gallery);
+    if (galary != null){
+      setState(() {
+        _image=galary;
+        productimag=galary;
+        print(productimag.path);
+      });
+    }
+  }
+  void productsadd()async{
+    String  productname = productnameController.text.trim();
+    String  desc = descriptionContoller.text.trim();
+    String  price = priceCotroller.text.trim();
+    String calory = caloryCotroller.text.trim();
+    String  category = categoryIdcontoller.text.trim();
+    try{
+      FormData formData = FormData.fromMap({
+        "name" : productname,
+        "description":desc,
+        "price":price,
+        "category_id":categoryindx,
+        "calories":calory,
+        "image":await MultipartFile.fromFile(productimag.path)
+      });
+      Response response =
+      await Dio().post("http://sowmyamatsa.pythonanywhere.com/product/" , data: formData);
+      setState(() {
+        createcatg = productsFromJson(jsonEncode(response.data)) as Delete ;
+        print(response.data);
+        responses=response.data["message"];
+      });
+    }
+    catch(e){
+
+    }
+  }
+  _addproduct(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Add Product'),
+            content: Container(
+              height: 150,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: productnameController,
+                        decoration: InputDecoration(
+                            hintText: "Enter Name"
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: descriptionContoller,
+                        decoration: InputDecoration(
+                            hintText: "Enter Description"
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: priceCotroller,
+                        decoration: InputDecoration(
+                            hintText: "Enter Price"
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: TextField(
+                        controller: caloryCotroller,
+                        decoration: InputDecoration(
+                            hintText: "Enter calories"
+                        ),
+                      ),
+                    ),
+                    RaisedButton(
+                        child: Text("upload"),
+                        onPressed: (){
+                          setState(() {
+                            productcameraClick();
+                          });
+                        }),
+                    RaisedButton(
+                        child: Text("Click To Add"),
+                        onPressed: (){
+                          productsadd();
+                          setState(() {
+
+                          });
+                        }),
+                    responses==null ?Text("enter valid details"):Text(responses),
+                  ],
+                ),
+              ),
+            ),
+            actions: <Widget>[
+              new FlatButton(
+                child: new Text('Ok'),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -435,28 +563,28 @@ class _HomePageState extends State<HomePage> {
                                           child: Icon(Icons.add,size: 20,),
                                         ),
                                       ),
-                                      InkWell(
-                                        onTap: (){
-                                          _deletecategory(context);
-                                        },
-                                        child: Container(
-                                          height: 30,
-                                          width: 35,
-                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.amber),
-                                          child: Icon(Icons.delete_outline_sharp,size: 20,),
-                                        ),
-                                      ),
-                                      InkWell(
-                                        onTap: (){
-                                          _patchDialog(context);
-                                        },
-                                        child: Container(
-                                          height: 30,
-                                          width: 35,
-                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.grey),
-                                          child: Icon(Icons.edit,size: 20,),
-                                        ),
-                                      ),
+                                      // InkWell(
+                                      //   onTap: (){
+                                      //     _deletecategory(context);
+                                      //   },
+                                      //   child: Container(
+                                      //     height: 30,
+                                      //     width: 35,
+                                      //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.amber),
+                                      //     child: Icon(Icons.delete_outline_sharp,size: 20,),
+                                      //   ),
+                                      // ),
+                                      // InkWell(
+                                      //   onTap: (){
+                                      //     _patchDialog(context);
+                                      //   },
+                                      //   child: Container(
+                                      //     height: 30,
+                                      //     width: 35,
+                                      //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.grey),
+                                      //     child: Icon(Icons.edit,size: 20,),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                   SizedBox(height: 15,),
@@ -478,10 +606,21 @@ class _HomePageState extends State<HomePage> {
                                               categoryindx=current.categoryId;
                                             });
                                           },
+                                            onLongPress:(){
+                                            // _deletecategory(context);
+                                                Navigator.of(context).push(
+                                                 MaterialPageRoute(
+                                                   builder: (context) =>Delete_catg_prod(
+                                                   categoryid:categoryindx,
+                                                   ),
+                                                 ),
+                                                );
+                                                } ,
                                           child: Categories(
                                             categoryname: list[index].categoryName,
                                             image: list[index].imageUrl,
                                             productcategory: indx,
+                                            category_id: categoryindx,
                                           ),
                                         );
                                       },
@@ -529,13 +668,14 @@ class _HomePageState extends State<HomePage> {
                                     alignment: Alignment.center,
                                     child: InkWell(
                                       onTap: (){
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>Add_catg_prod(
-
-                                            ),
-                                          ),
-                                        );
+                                        // Navigator.of(context).push(
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) =>Add_catg_prod(
+                                        //
+                                        //     ),
+                                        //   ),
+                                        // );
+                                        _addproduct(context);
                                       },
                                       child: Container(
                                         alignment: Alignment.center,
@@ -621,7 +761,7 @@ class _ProductsState extends State<Products> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Add Category'),
+            title: Text('Delete product'),
             content: Container(
               height: 150,
               child: SingleChildScrollView(
@@ -702,7 +842,7 @@ class _ProductsState extends State<Products> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Add Category'),
+            title: Text('Add Product'),
             content: Container(
               height: 150,
               child: SingleChildScrollView(
@@ -810,7 +950,7 @@ class _ProductsState extends State<Products> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Add Category'),
+            title: Text("update product"),
             content: Container(
               height: 150,
               child: SingleChildScrollView(
@@ -994,11 +1134,13 @@ class Categories extends StatefulWidget {
     this.categoryname,
     this.productcategory,
     this.image,
+    this.category_id,
     Key key,
   }) : super(key: key);
   final String categoryname;
   final String productcategory;
   final String image;
+  final int category_id;
 
   @override
   _CategoriesState createState() => _CategoriesState();
@@ -1033,19 +1175,30 @@ class _CategoriesState extends State<Categories> {
               )
               ]
           ),
-          child: Column(
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 20,
-                backgroundImage: NetworkImage("http://sowmyamatsa.pythonanywhere.com/${widget.image}"),
-              ),
-              SizedBox(height: 10,),
-              Padding(
-                padding: const EdgeInsets.only(left:3.0),
-                child: Text(widget.categoryname,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize:9),),
-              )
-            ],
+          child: InkWell(
+            // onLongPress:(){
+            //   Navigator.of(context).push(
+            //         MaterialPageRoute(
+            //           builder: (context) =>Delete_catg_prod(
+            //             categoryid: widget.category_id,
+            //           ),
+            //         ),
+            //       );
+            // } ,
+            child: Column(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: 20,
+                  backgroundImage: NetworkImage("http://sowmyamatsa.pythonanywhere.com/${widget.image}"),
+                ),
+                SizedBox(height: 10,),
+                Padding(
+                  padding: const EdgeInsets.only(left:3.0),
+                  child: Text(widget.categoryname,style: TextStyle(color: Colors.white,fontWeight: FontWeight.w400,fontSize:9),),
+                )
+              ],
+            ),
           ),
         ),
         SizedBox(width: 10,)
